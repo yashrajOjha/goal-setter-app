@@ -14,5 +14,6 @@ app.use(express.json()) //body parser for json data
 app.use(express.urlencoded({extended:false}))//url encoded parser
 app.use('/api/goals',require('./routes/goalRoutes')) //linking the routes
 /*get request to the goalRoutes using the api/goals*/
+app.use('/api/users',require('./routes/userRoutes'))
 app.use(errorHandler)
 app.listen(PORT,()=>console.log(`Server Started on Port ${PORT}`))
