@@ -9,6 +9,11 @@ const getGoals = (req,res) =>{
 // @access PRIVATE
 // @route POST /api/goals
 const setGoal = (req,res) =>{
+    // console.log(req.body); //inorder to use body we should add some middleware
+    if(!req.body.text){
+        res.status(400) // json({message:"Please add a text field "})
+        throw new Error("Please add a text field")
+    }
     res.status(200).json({message:"Set Goals from controller"})
 }
 
