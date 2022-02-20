@@ -4,12 +4,17 @@ const asyncHandler = require('express-async-handler')
 handling exceptions inside of async express routes and passing them to your express error handlers. */
 
 const Goal = require('../models/goalModel')
+//User cannot delete another users goal
+const User = require('../models/userModel')
 
 // @desc Get goals
 // @access PRIVATE
 // @route GET /api/goals
 const getGoals = asyncHandler( async (req,res) =>{
-    const goals = await Goal.find()
+    //show goals only for that user
+    const goals = await Goal.find({
+        user: req.user.id
+    })
     // so here the idea is to find the goals and return to the console. 
     res.status(200).json(goals)
 })
@@ -25,6 +30,7 @@ const setGoal = asyncHandler(async (req,res) =>{
     } //the next set of statements are executed when ther is a text, a text body is created and posted
     const goal = await Goal.create({
         text: req.body.text,
+        user:req.user.id,
     })
     res.status(200).json(goal)
 })
@@ -40,8 +46,19 @@ const updateGoal = asyncHandler( async (req,res) =>{
         res.status(400)
         throw new Error('Goal not found')
     }
+    const user = await User.findById(req.user.id)
+    if(!user){
+        res.status(401)
+        throw new Error("User not found")
+    }
+    //to check if the user logged in and the goal's owner is the same
+    if(goal.user.toString()!== user.id){
+        res.status(401)
+        throw new Error("User not authorized to update goals.")
+    }else{
     const updatedGoalValue = await Goal.findByIdAndUpdate(req.params.id,req.body,{new:true,})
     res.status(200).json(updatedGoalValue)
+    }
 })
 
 // @desc Delete goals
@@ -53,9 +70,18 @@ const deleteGoal = asyncHandler(async (req,res) =>{
         res.status(400)
         throw new Error('Goal cannot be deleted as it is not found')
     }
-
+    const user = await User.findById(req.user.id)
+    if(!user){
+        res.status(401)
+        throw new Error("User not found")
+    }
+    //to check if the user logged in and the goal's owner is the same
+    if(goal.user.toString()!== user.id){
+        res.status(401)
+        throw new Error("User not authorized to update goals.")
+    }else{
     await goal.remove()
-    res.status(200).json({id: req.params.id})
+    res.status(200).json({id: req.params.id})} 
 }) 
 
 module.exports ={
