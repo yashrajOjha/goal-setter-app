@@ -84,6 +84,8 @@ h3 {
 
 .heading p {
   color: #828282;
+  font-weight: 100;
+  font-size: 20px;
 }
 
 .goals {
@@ -97,6 +99,12 @@ h3 {
   margin: 10px 0;
   padding: 20px 0 10px;
   position: relative;
+}
+.goal h2{
+  padding:10px;
+}
+.time-goal{
+  font-size: 10px;
 }
 
 .goal .close {
